@@ -1,123 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>GT Agency Form</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GT Agency Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="css/util.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
 <!--===============================================================================================-->
-
-	<script src="/jpeg_camera/swfobject.min.js" type="text/javascript"></script>
-	<script src="/jpeg_camera/canvas-to-blob.min.js" type="text/javascript"></script>
-	<script src="/jpeg_camera/jpeg_camera.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="js/demo.js"></script>
-    <link href="css/demo.css" media="all" rel="stylesheet" type="text/css" /></link>
 </head>
 <body>
-	<div class="container-contact100">
-		<div class="wrap-contact100">
-			<form action ="myform.php" method="post" class="contact100-form validate-form">
-				<span class="contact100-form-title">
-					GT Agency
-				</span>
+    <div class="container-contact100">
+        <div class="wrap-contact100">
+            <form action ="myform.php" method="post" class="contact100-form validate-form">
+                <span class="contact100-form-title">
+                    GT Agency
+                </span>
 
-				<div class="wrap-input100 validate-input" data-validate="First name is required">
-					<input class="input100" id="firstname" type="text" name="firstname" placeholder="First Name">
-					<label class="label-input100" for="firstname">
-						<span class="lnr lnr-user"></span>
-					</label>
-				</div>
+                <div class="wrap-input100 validate-input" data-validate="First name is required">
+                    <input class="input100" id="firstname" type="text" name="firstname" placeholder="First Name">
+                    <label class="label-input100" for="firstname">
+                        <span class="lnr lnr-user"></span>
+                    </label>
+                </div>
 
-				<div class="wrap-input100 validate-input" data-validate="Last name is required">
-					<input class="input100" id="lastname" type="text" name="lastname" placeholder="Last Name">
-					<label class="label-input100" for="lastname">
-						<span class="lnr lnr-user"></span>
-					</label>
-				</div>
+                <div class="wrap-input100 validate-input" data-validate="Last name is required">
+                    <input class="input100" id="lastname" type="text" name="lastname" placeholder="Last Name">
+                    <label class="label-input100" for="lastname">
+                        <span class="lnr lnr-user"></span>
+                    </label>
+                </div>
 
-				<div class="wrap-input100 validate-input" data-validate = "Valid GT ID is required">
-					<input class="input100" id="gtid" type="text" name="gtid" placeholder="GT ID">
-					<label class="label-input100" for="gtid">
-					</label>
-				</div>
-				    <div id="camera_info"></div>
-    <div id="stream_stats"></div>
+                <div class="wrap-input100 validate-input" data-validate = "Valid GT ID is required">
+                    <input class="input100" id="gtid" type="text" name="gtid" placeholder="GT ID">
+                    <label class="label-input100" for="gtid">
+                    </label>
+                </div>
 
-    <div id="camera">
-      <div class="placeholder">
-        Your browser does not support camera access.<br>
-        We recommend
-        <a href="https://www.google.com/chrome/" target="_blank">Chrome</a>
-        &mdash; modern, secure, fast browser from Google.<br>
-        It's free.
-      </div>
-    </div><br>
+                <video id="video" width="640" height="480" autoplay></video>
+                <button id="snap">Snap Photo</button>
+                <canvas id="canvas" width="640" height="480"></canvas>
+                <script>
+                // Grab elements, create settings, etc.
+                var video = document.getElementById('video');
+                // Get access to the camera!
+                if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                // Not adding `{ audio: true }` since we only want video now
+                navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                    video.src = window.URL.createObjectURL(stream);
+                    video.play();
+                });
+            }
+            else if(navigator.getUserMedia) { // Standard
+                navigator.getUserMedia({ video: true }, function(stream) {
+                    video.src = stream;
+                    video.play();
+                }, errBack);
+                } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+                    navigator.webkitGetUserMedia({ video: true }, function(stream){
+                        video.src = window.webkitURL.createObjectURL(stream);
+                        video.play();
+                    }, errBack);
+                    } else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
+                        navigator.mozGetUserMedia({ video: true }, function(stream){
+                            video.src = window.URL.createObjectURL(stream);
+                            video.play();
+                        }, errBack);
+                    }
+                    // Elements for taking the snapshot
+                    var canvas = document.getElementById('canvas');
+                    var context = canvas.getContext('2d');
+                    var video = document.getElementById('video');
 
-    <button id="take_snapshots">Take more snapshots</button>
-    <button id="show_stream">Show stream</button><br>
-
-    <div id="snapshots"></div>
-
-    <button id="discard_snapshot">Discard snapshot</button>
-    <button id="upload_snapshot">Upload to URL</button><br>
-
-    <input type="text" id="api_url" placeholder="https://example.com/upload"><br>
-
-    <img src="jpeg_camera/loader.gif" id="loader">
-    <div id="upload_status"></div>
-    <div id="upload_result"></div>
-				<div class="container-contact100-form-btn">
-					<div class="wrap-contact100-form-btn">
-						<div class="contact100-form-bgbtn"></div>
-						<button type="submit" value="submit" class="contact100-form-btn">
-							Submit
-						</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+                    // Trigger photo take
+                    document.getElementById("snap").addEventListener("click", function() {
+                        context.drawImage(video, 0, 0, 640, 480);
+                    });</script>
+                <div class="container-contact100-form-btn">
+                    <div class="wrap-contact100-form-btn">
+                        <div class="contact100-form-bgbtn"></div>
+                        <button type="submit" value="submit" class="contact100-form-btn">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
 
-	<div id="dropDownSelect1"></div>
+    <div id="dropDownSelect1"></div>
 
 <!--===============================================================================================-->
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
-	<script src="vendor/animsition/js/animsition.min.js"></script>
+    <script src="vendor/animsition/js/animsition.min.js"></script>
 <!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="vendor/bootstrap/js/popper.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 <!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
+    <script src="vendor/select2/select2.min.js"></script>
 <!--===============================================================================================-->
-	<script src="vendor/daterangepicker/moment.min.js"></script>
-	<script src="vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="vendor/daterangepicker/moment.min.js"></script>
+    <script src="vendor/daterangepicker/daterangepicker.js"></script>
 <!--===============================================================================================-->
-	<script src="vendor/countdowntime/countdowntime.js"></script>
+    <script src="vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
-	<script src="js/main.js"></script>
+    <script src="js/main.js"></script>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
