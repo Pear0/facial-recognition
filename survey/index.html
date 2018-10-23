@@ -30,79 +30,115 @@
 <body>
     <div class="container-contact100">
         <div class="wrap-contact100">
-            <form action ="myform.php" method="post" class="contact100-form validate-form">
-                <span class="contact100-form-title">
-                    GT Agency
-                </span>
 
-                <div class="wrap-input100 validate-input" data-validate="First name is required">
-                    <input class="input100" id="firstname" type="text" name="firstname" placeholder="First Name">
-                    <label class="label-input100" for="firstname">
-                        <span class="lnr lnr-user"></span>
-                    </label>
+            <span class="contact100-form-title">
+                GT Agency
+            </span>
+
+            <div class="wrap-input100 validate-input" data-validate="First name is required">
+                <input class="input100" id="firstname" type="text" name="firstname" placeholder="First Name">
+                <label class="label-input100" for="firstname">
+                    <span class="lnr lnr-user"></span>
+                </label>
+            </div>
+
+            <div class="wrap-input100 validate-input" data-validate="Last name is required">
+                <input class="input100" id="lastname" type="text" name="lastname" placeholder="Last Name">
+                <label class="label-input100" for="lastname">
+                    <span class="lnr lnr-user"></span>
+                </label>
+            </div>
+
+            <div class="wrap-input100 validate-input" data-validate = "Valid GT ID is required">
+                <input class="input100" id="gtid" type="text" name="gtid" placeholder="GT ID">
+                <label class="label-input100" for="gtid">
+                </label>
+            </div>
+
+            <video id="video" width="640" height="480" autoplay></video>
+
+            <div class="container-contact100-form-btn">
+                <div class="wrap-contact100-form-btn">
+                    <div class="contact100-form-bgbtn"></div>
+                      <button id="snap">Snap Photo</button>
                 </div>
+            </div>
 
-                <div class="wrap-input100 validate-input" data-validate="Last name is required">
-                    <input class="input100" id="lastname" type="text" name="lastname" placeholder="Last Name">
-                    <label class="label-input100" for="lastname">
-                        <span class="lnr lnr-user"></span>
-                    </label>
-                </div>
+            <canvas id="canvas" width="640" height="480"></canvas>
 
-                <div class="wrap-input100 validate-input" data-validate = "Valid GT ID is required">
-                    <input class="input100" id="gtid" type="text" name="gtid" placeholder="GT ID">
-                    <label class="label-input100" for="gtid">
-                    </label>
-                </div>
+          <div class="container-contact100-form-btn">
+              <div class="wrap-contact100-form-btn">
+                  <div class="contact100-form-bgbtn"></div>
+                  <button type="submit" value="Submit" onclick="saveTextAsFile()" class="contact100-form-btn">
+                    Submit
+                  </button>
+              </div>
+          </div>
+          <script type="text/javascript">
+          // Grab elements, create settings, etc.
+          var video = document.getElementById('video');
+          // Get access to the camera!
+          if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          // Not adding `{ audio: true }` since we only want video now
+          navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+              video.src = window.URL.createObjectURL(stream);
+              video.play();
+          });
+          }
+          else if(navigator.getUserMedia) { // Standard
+          navigator.getUserMedia({ video: true }, function(stream) {
+              video.src = stream;
+              video.play();
+          }, errBack);
+          } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+              navigator.webkitGetUserMedia({ video: true }, function(stream){
+                  video.src = window.webkitURL.createObjectURL(stream);
+                  video.play();
+              }, errBack);
+              } else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
+                  navigator.mozGetUserMedia({ video: true }, function(stream){
+                      video.src = window.URL.createObjectURL(stream);
+                      video.play();
+                  }, errBack);
+              }
+              // Elements for taking the snapshot
+              var canvas = document.getElementById('canvas');
+              var context = canvas.getContext('2d');
+              var video = document.getElementById('video');
+              var image = new Image();
+              // Trigger photo take
+              document.getElementById("snap").addEventListener("click", function() {
+                  context.drawImage(video, 0, 0, 640, 480)
+                  image.src = canvas.toDataURL("image/png");
+              });
+              var button = document.getElementById('btn-download');
+              button.addEventListener('click', function (e) {
+                button.href = image.src;
+              });
+              function saveTextAsFile()
+              {
+                var firstname = document.getElementById("firstname").value;
+                var lastname = document.getElementById("lastname").value;
+                var gtid = document.getElementById("gtid").value;
+                var downloadLink = document.createElement("a");
 
-                <video id="video" width="640" height="480" autoplay></video>
-                <button id="snap">Snap Photo</button>
-                <canvas id="canvas" width="640" height="480"></canvas>
-                <script>
-                // Grab elements, create settings, etc.
-                var video = document.getElementById('video');
-                // Get access to the camera!
-                if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                // Not adding `{ audio: true }` since we only want video now
-                navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-                    video.src = window.URL.createObjectURL(stream);
-                    video.play();
-                });
-            }
-            else if(navigator.getUserMedia) { // Standard
-                navigator.getUserMedia({ video: true }, function(stream) {
-                    video.src = stream;
-                    video.play();
-                }, errBack);
-                } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
-                    navigator.webkitGetUserMedia({ video: true }, function(stream){
-                        video.src = window.webkitURL.createObjectURL(stream);
-                        video.play();
-                    }, errBack);
-                    } else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
-                        navigator.mozGetUserMedia({ video: true }, function(stream){
-                            video.src = window.URL.createObjectURL(stream);
-                            video.play();
-                        }, errBack);
-                    }
-                    // Elements for taking the snapshot
-                    var canvas = document.getElementById('canvas');
-                    var context = canvas.getContext('2d');
-                    var video = document.getElementById('video');
+                downloadLink.download = firstname + "_" + lastname + "_" + gtid;
+                downloadLink.innerHTML = "Download File";
+                downloadLink.href = image.src;
+                downloadLink.onclick = destroyClickedElement;
+                downloadLink.style.display = "none";
+                document.body.appendChild(downloadLink);
 
-                    // Trigger photo take
-                    document.getElementById("snap").addEventListener("click", function() {
-                        context.drawImage(video, 0, 0, 640, 480);
-                    });</script>
-                <div class="container-contact100-form-btn">
-                    <div class="wrap-contact100-form-btn">
-                        <div class="contact100-form-bgbtn"></div>
-                        <button type="submit" value="submit" class="contact100-form-btn">
-                            Submit
-                        </button>
-                    </div>
-                </div>
-            </form>
+                downloadLink.click();
+                location.reload();
+              }
+              function destroyClickedElement(event)
+              {
+                document.body.removeChild(event.target);
+              }
+
+
+          </script>
         </div>
     </div>
 
