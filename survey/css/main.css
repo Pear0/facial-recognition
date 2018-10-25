@@ -7,12 +7,12 @@
 
 @font-face {
   font-family: Oswald-Regular;
-  src: url('../fonts/oswald/Oswald-Regular.ttf'); 
+  src: url('../fonts/oswald/Oswald-Regular.ttf');
 }
 
 @font-face {
   font-family: Oswald-Medium;
-  src: url('../fonts/oswald/Oswald-Medium.ttf'); 
+  src: url('../fonts/oswald/Oswald-Medium.ttf');
 }
 
 
@@ -21,8 +21,8 @@
 [ RESTYLE TAG ]*/
 
 * {
-	margin: 0px; 
-	padding: 0px; 
+	margin: 0px;
+	padding: 0px;
 	box-sizing: border-box;
 }
 
@@ -145,7 +145,7 @@ iframe {
 [ Contact ]*/
 
 .container-contact100 {
-  width: 100%;  
+  width: 100%;
   min-height: 100vh;
   display: -webkit-box;
   display: -webkit-flex;
@@ -157,7 +157,7 @@ iframe {
   align-items: center;
   padding: 15px;
   background: #e5e8ea;
-  
+
 }
 
 .wrap-contact100 {
@@ -426,5 +426,26 @@ textarea.input100 {
   }
 }
 
+.vid-border{
+  position: relative;
+  height: 480px;
+  width: 640px;
+  border: 7px solid grey;
+  overflow: hidden;
+}
+.vid-border2{
+  position: relative;
+  height: 480px;
+  width: 640px;
+  border: 7px solid black;
+  overflow: hidden;
+}
+#vid {
+  position: absolute;
+  top:-5px;
+  left:-5px;
+  height: 480px;
+  width: 580px;
+}
 
-
+.center { margin: 0 auto; width: 300px; }
