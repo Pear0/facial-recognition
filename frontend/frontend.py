@@ -11,21 +11,23 @@ import threading
 
 root = tk.Tk()
 listbox = None
+Start = None
 
 def start():
     global root
     global listbox
+    global Start
     listbox = RL.MultiColumnListbox()
     root.update()
     root.after(1000,lambda: listbox.refresh(False))
     threading.Thread(target=listbox.doStuff).start()
-
+    Start['state'] = "disabled"
 
 def StartButton():
     start()
 
 def init():
-    global root
+    global root, Start
 
     root.title("Attendence")
     #root.resizable(width=False, height=False)
