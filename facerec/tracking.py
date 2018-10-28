@@ -6,6 +6,7 @@ import numpy as np
 import queue
 import re
 import json
+import face_recognition
 
 class FaceRecognitionWorker:
     @classmethod
@@ -18,15 +19,21 @@ class FaceRecognitionWorker:
 
         self.known_encodings = []
         self.known_names = []
+        self.person_info = []
 
     def scan_known_people(self, known_people_folder):
-        import face_recognition
-
         known_names = []
         known_face_encodings = []
+        person_info = []
 
         for file in self.image_files_in_folder(known_people_folder):
             basename = os.path.splitext(os.path.basename(file))[0]
+            splitBase = basename.split("_")
+            if(len(splitBase) == 3 ):
+                basename = splitBase[0] + " " + splitBase[1][0] + "."
+                person_info.append([basename, splitBase[0] + " " + splitBase[1],
+                                    splitBase[2]])
+
             img = face_recognition.load_image_file(file)
             encodings = face_recognition.face_encodings(img)
 
@@ -38,8 +45,7 @@ class FaceRecognitionWorker:
             else:
                 known_names.append(basename)
                 known_face_encodings.append(encodings[0])
-
-        return known_names, known_face_encodings
+        return known_names, known_face_encodings, person_info
 
     def image_files_in_folder(self, folder):
         return [os.path.join(folder, f) for f in os.listdir(folder) if re.match(r'.*\.(jpg|jpeg|png)', f, flags=re.I)]
@@ -47,23 +53,20 @@ class FaceRecognitionWorker:
 
 
     def run(self):
-        import face_recognition
-
         print("Loading known face image(s)")
-        #obama_image = face_recognition.load_image_file("webcam_tracking/obama_small.jpg")
-        #self.known_encodings += [face_recognition.face_encodings(obama_image)[0]]
-        #self.known_names += ['Barack Obama']
+        self.known_names, self.known_face_encodings, self.person_info = self.scan_known_people("webcam_tracking")
 
-        self.known_names, self.known_face_encodings = self.scan_known_people("webcam_tracking")
-
-        name_generator = ('Person {}'.format(i) for i in range(1, 10000000))
+        name_generator = ('Person {}'.format(i) for i in range(1, 10000))
 
         print('{} booted.'.format(self.__class__.__name__))
 
         fps_time = time.time()
         frame_count = 0
         data = []
-
+        dump = {}
+        checker = ['' for x in range(4)]
+        frameTotal = 0
+        bias = 4  #Number of frame allowed for mistake
         while True:
             try:
                 face_pairs = self.face_pairs_queue.get(False)
@@ -94,21 +97,23 @@ class FaceRecognitionWorker:
                     self.known_face_encodings.append(face_encoding)
                     self.known_names.append(name)
 
-                if name not in data:
+                checker[frameTotal%bias] = name
+
+                if name not in data and checker.count(checker[0]) == len(checker):
                     data.append(name)
-                #print (data)
-                with open('data.json', 'w') as outfile:
-                    json.dump(data, outfile)
-                print("{} - I see someone named {}!".format(datetime.datetime.now(), name))
+                    #Search person_info for it
+                    full_name = name
+                    gtid = "Unknown"
+                    for i in range(len(self.person_info)):
+                        if name == self.person_info[i][0]:
+                            full_name = self.person_info[i][1]
+                            gtid = self.person_info[i][2]
+                    dump[name] = {'name': full_name, 'id': gtid}
+                filename = 'Attendence ' + time.strftime("%m.%d") + '.json'
+                with open(filename, 'w') as outfile:
+                    json.dump(dump, outfile, sort_keys=True, indent=4)
 
-            if time.time() - st > 0.5:
-                print('Face recognition took {} seconds'.format(time.time() - st))
 
-            curr_time = time.time()
-            frame_count += 1
-            if curr_time - fps_time > 1:
-                fps = frame_count / (curr_time - fps_time)
-                print('Detections ran {} times in {} seconds ({} times/s)'
-                      .format(frame_count, curr_time - fps_time, fps))
-                frame_count = 0
-                fps_time = curr_time
+                print("{} - I see someone named {}".format(datetime.datetime.now(), name))
+
+            frameTotal += 1
