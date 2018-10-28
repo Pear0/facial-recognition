@@ -36,7 +36,7 @@
             </span>
 
             <div class="wrap-input100 validate-input" data-validate="First name is required">
-                <input class="input100" id="firstname" type="text" name="firstname" placeholder="First Name">
+                <input class="input100" id="firstname" type="text" name="firstname" placeholder="First Name" >
                 <label class="label-input100" for="firstname">
                     <span class="lnr lnr-user"></span>
                 </label>
@@ -55,16 +55,21 @@
                 </label>
             </div>
 
-            <video id="video" width="640" height="480" autoplay></video>
+            <p><strong>LIVE VIDEO</strong></p>
+            <div class="vid-border">
+                <video id="video" width="640" height="480" border="5" autoplay></video>
+            </div>
 
             <div class="container-contact100-form-btn">
                 <div class="wrap-contact100-form-btn">
                     <div class="contact100-form-bgbtn"></div>
-                      <button id="snap">Snap Photo</button>
+                      <button id="snap" >Snap Photo</button>
                 </div>
             </div>
-
+            <center><p><strong>CURRENT SELFIE</strong></p></center>
+            <div class="vid-border2">
             <canvas id="canvas" width="640" height="480"></canvas>
+            </div>
 
           <div class="container-contact100-form-btn">
               <div class="wrap-contact100-form-btn">
@@ -120,6 +125,11 @@
                 var firstname = document.getElementById("firstname").value;
                 var lastname = document.getElementById("lastname").value;
                 var gtid = document.getElementById("gtid").value;
+              if(firstname == "" || lastname == "" || gtid == ""){
+                  alert("Please fill in all the fields.");
+              } else if (image.src == ""){
+                alert("Please take a picture of yourself.");
+              } else {
                 var downloadLink = document.createElement("a");
 
                 downloadLink.download = firstname + "_" + lastname + "_" + gtid;
@@ -132,10 +142,13 @@
                 downloadLink.click();
                 location.reload();
               }
+              }
               function destroyClickedElement(event)
               {
                 document.body.removeChild(event.target);
               }
+
+
           </script>
         </div>
     </div>
